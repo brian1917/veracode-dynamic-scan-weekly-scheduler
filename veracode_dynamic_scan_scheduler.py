@@ -23,8 +23,9 @@ def main():
     # SET UP ARGUMENTS
     parser = argparse.ArgumentParser(
         description='This script schedules dynamic scans based on an input CSV file. Must include a header line '
-                    '(first line is skipped). Col 1: APP ID; Col 2: Days out to start (e.g., if run on a Sunday a 1 '
-                    'will set to start on Monday); Col 3: Hour to start; Col 4: Days to run.')
+                    '(first line is skipped). Col 1: APP ID. Col 2: Days out to start (e.g., a 2 schedules the scan '
+                    'two days from script run time. If script is always run on a Sunday, that scan will start on a '
+                    'Tuesday. Col 3: Hour to start. Col 4: Days to run.')
     parser.add_argument('-c', '--credentials', required=True,
                         help='Text file with username on line 1 and password on line 2')
     parser.add_argument('-a', '--app_list_file_name', required=False,
