@@ -4,7 +4,7 @@
 CSV, requests, argparse, datetime, os
 
 ## Description
-Script is intended to be be used to set weekly dynamic scans from an input CSV file.
+Script to set weekly dynamic scans from an input CSV file.
 
 ## Parameters
 1.  **-c, --credentials**: path to a text file that has the username on the first line and password on the second line.
