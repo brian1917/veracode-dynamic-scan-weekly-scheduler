@@ -1,10 +1,10 @@
 # Veracode Dynamic Scan Weekly Scheduler
 
-## Required Libraries
-CSV, requests, argparse, datetime, os
-
 ## Description
 Script to set weekly dynamic scans from an input CSV file.
+
+## Required Libraries
+CSV, requests, argparse, datetime, os
 
 ## Parameters
 1.  **-c, --credentials**: path to a text file that has the username on the first line and password on the second line.
