@@ -1,4 +1,4 @@
-# veracode-dynamic-scan-weekly-scheduler
+# Veracode Dynamic Scan Weekly Scheduler
 
 ## Required Libraries
 CSV, requests, argparse, datetime, os
