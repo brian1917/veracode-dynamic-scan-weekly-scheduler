@@ -1,7 +1,7 @@
 # Veracode Dynamic Scan Weekly Scheduler
 
 ## Description
-Script to set weekly dynamic scans from an input CSV file.
+Script to set weekly dynamic scans from an input CSV file. The script should be executed on a weekly basis (e.g., cron job).
 
 ## Required Libraries
 CSV, requests, argparse, datetime, os
