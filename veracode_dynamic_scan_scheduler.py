@@ -30,7 +30,8 @@ def main():
                         help='Text file with username on line 1 and password on line 2')
     parser.add_argument('-a', '--app_list_file_name', required=False,
                         help='CSV file with app list. Use --help for instructions on CSV structure.')
-    parser.add_argument('-v', '--verbose', required=False, dest='verbose_out', action='store_true', help='Print verbose output')
+    parser.add_argument('-v', '--verbose', required=False, dest='verbose_out', action='store_true',
+                        help='Print verbose output')
     args = parser.parse_args()
 
     # SET USER NAME/PASSWORD VARIABLES
