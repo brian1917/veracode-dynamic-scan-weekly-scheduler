@@ -74,7 +74,7 @@ def main():
 
                 # CALL API TO START SCAN
                 if args.verbose_out is True:
-                    print '[*] Making rescan API for ' + row[0]
+                    print '[*] Making rescan API for ' + row[0] + '...'
                 rescan = rescan_api(username, password, row[0])
 
                 if rescan[0] != 200 or '<error>' in rescan[1]:
@@ -95,7 +95,7 @@ def main():
 
                 # CALL API TO SUBMIT SCAN
                 if args.verbose_out is True:
-                    print '[*] Making submit API for ' + row[0]
+                    print '[*] Making submit API for ' + row[0] + '...'
                 submit = submit_dynamic_api(username, password, row[0], start_time, end_time)
 
                 if submit[0] != 200 or '<error>' in submit[1]:
