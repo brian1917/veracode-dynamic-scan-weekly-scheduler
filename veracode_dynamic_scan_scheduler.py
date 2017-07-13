@@ -54,37 +54,55 @@ def main():
                 print 'Processing App ID ' + row[0]
 
                 # CALCULATE START AND END TIME
+                print '[*] Calculating start time...'
                 start_time = (dt.datetime(dt.datetime.now().year, dt.datetime.now().month, dt.datetime.now().day,
                                           int(row[2])) + dt.timedelta(days=int(row[1]))).isoformat()
+                print '[*] Start time is ' + start_time
+                print '[*] Calculating end time...'
                 end_time = (
                     dt.datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S') + dt.timedelta(days=int(row[3]))).isoformat()
+                print '[*] End time is ' + end_time
 
                 # CALL API TO START SCAN
+                print '[*] Making rescan API for ' + row[0]
                 rescan = rescan_api(username, password, row[0])
                 if rescan[0] != 200 or '<error>' in rescan[1]:
+                    print '[*] Error in rescan API for ' + row[0] + '; writing to log file...'
                     logfile.write(dt.datetime.now().isoformat() + ' Rescan API failed for App ID ' + row[0] + '\n')
                     logfile.write('[*] Response code: ' + str(rescan[0]) + '\n')
                     logfile.write('[*] API Response: ' + '\n')
                     logfile.write(rescan[1] + '\n')
+                    print '[*] Writing error for rescan API to log file complete'
                 else:
+                    print '[*] Rescan API call was successful; writing to log file...'
                     logfile.write(dt.datetime.now().isoformat() + ' Rescan API accepted for App ID ' + row[0] + '\n')
+                    print '[*] Writing successful rescan API to log file complete'
 
                 # CALL API TO SUBMIT SCAN
+                print '[*] Making submit API for ' + row[0]
                 submit = submit_dynamic_api(username, password, row[0], start_time, end_time)
                 if submit[0] != 200 or '<error>' in submit[1]:
+                    print '[*] Error in submit API for ' + row[0] + '; writing to log file...'
                     logfile.write(dt.datetime.now().isoformat() + ': Submit API failed for App ID ' + row[0] + '\n')
                     logfile.write('[*] Response code: ' + str(submit[0]) + '\n')
                     logfile.write('[*] API Response: ' + '\n')
                     logfile.write(submit[1] + '\n \n \n')
+                    print '[*] Writing error for submit API to log file complete'
                 else:
+                    print '[*] Submit API call was successful; writing to log file...'
                     logfile.write(dt.datetime.now().isoformat() + ' Submit API accepted for App ID ' + row[
                         0] + '; scan scheduled to start for ' + start_time + ' and end on ' + end_time + '\n \n \n')
+                    print '[*] Writing successful submit API to log file complete'
 
         # CLOSE LOG FILE
+        print '[*] Closing log file...'
         logfile.close()
+        print '[*] Log file closed'
 
     # CLOSE APP LIST FILE
+    print '[*] Closing app_list file...'
     app_list_file.close()
+    print '[*] App_list file closed'
 
 
 if __name__ == "__main__":
