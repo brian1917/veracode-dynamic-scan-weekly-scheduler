@@ -30,10 +30,10 @@ def main():
                         help='Text file with username on line 1 and password on line 2')
     parser.add_argument('-a', '--app_list_file_name', required=False,
                         help='CSV file with app list. Use --help for instructions on CSV structure.')
+    parser.add_argument('-v', '--verbose', required=False, dest='verbose_out', action='store_true', help='Print verbose output')
     args = parser.parse_args()
 
-    # SET USER NAME/PASSWORD
-
+    # SET USER NAME/PASSWORD VARIABLES
     username = open(args.credentials, 'r').read().splitlines()[0]
     password = open(args.credentials, 'r').read().splitlines()[1]
 
@@ -42,8 +42,10 @@ def main():
         file_name = open('api_logs.txt', 'w')
         file_name.close()
 
+    # OPEN APP LIST FILE
     with open(args.app_list_file_name, 'rb') as app_list_file:
 
+        # OPEN API LOGS FILE
         with open('api_logs.txt', 'a') as logfile:
             # IGNORE THE FIRST HEADER LINE
             next(app_list_file)
@@ -53,56 +55,80 @@ def main():
             for row in app_list:
                 print 'Processing App ID ' + row[0]
 
-                # CALCULATE START AND END TIME
-                print '[*] Calculating start time...'
+                # CALCULATE START TIME
+                if args.verbose_out is True:
+                    print '[*] Calculating start time...'
                 start_time = (dt.datetime(dt.datetime.now().year, dt.datetime.now().month, dt.datetime.now().day,
                                           int(row[2])) + dt.timedelta(days=int(row[1]))).isoformat()
-                print '[*] Start time is ' + start_time
-                print '[*] Calculating end time...'
+                if args.verbose_out is True:
+                    print '[*] Start time is ' + start_time
+
+                # CALCULATE END TIME
+                if args.verbose_out is True:
+                    print '[*] Calculating end time...'
                 end_time = (
                     dt.datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S') + dt.timedelta(days=int(row[3]))).isoformat()
-                print '[*] End time is ' + end_time
+                if args.verbose_out is True:
+                    print '[*] End time is ' + end_time
 
                 # CALL API TO START SCAN
-                print '[*] Making rescan API for ' + row[0]
+                if args.verbose_out is True:
+                    print '[*] Making rescan API for ' + row[0]
                 rescan = rescan_api(username, password, row[0])
+
                 if rescan[0] != 200 or '<error>' in rescan[1]:
-                    print '[*] Error in rescan API for ' + row[0] + '; writing to log file...'
+                    if args.verbose_out is True:
+                        print '[*] Error in rescan API for ' + row[0] + '; writing to log file...'
                     logfile.write(dt.datetime.now().isoformat() + ' Rescan API failed for App ID ' + row[0] + '\n')
                     logfile.write('[*] Response code: ' + str(rescan[0]) + '\n')
                     logfile.write('[*] API Response: ' + '\n')
                     logfile.write(rescan[1] + '\n')
-                    print '[*] Writing error for rescan API to log file complete'
+                    if args.verbose_out is True:
+                        print '[*] Writing error for rescan API to log file complete'
                 else:
-                    print '[*] Rescan API call was successful; writing to log file...'
+                    if args.verbose_out is True:
+                        print '[*] Rescan API call was successful; writing to log file...'
                     logfile.write(dt.datetime.now().isoformat() + ' Rescan API accepted for App ID ' + row[0] + '\n')
-                    print '[*] Writing successful rescan API to log file complete'
+                    if args.verbose_out is True:
+                        print '[*] Writing successful rescan API to log file complete'
 
                 # CALL API TO SUBMIT SCAN
-                print '[*] Making submit API for ' + row[0]
+                if args.verbose_out is True:
+                    print '[*] Making submit API for ' + row[0]
                 submit = submit_dynamic_api(username, password, row[0], start_time, end_time)
+
                 if submit[0] != 200 or '<error>' in submit[1]:
-                    print '[*] Error in submit API for ' + row[0] + '; writing to log file...'
+                    if args.verbose_out is True:
+                        print '[*] Error in submit API for ' + row[0] + '; writing to log file...'
                     logfile.write(dt.datetime.now().isoformat() + ': Submit API failed for App ID ' + row[0] + '\n')
                     logfile.write('[*] Response code: ' + str(submit[0]) + '\n')
                     logfile.write('[*] API Response: ' + '\n')
                     logfile.write(submit[1] + '\n \n \n')
-                    print '[*] Writing error for submit API to log file complete'
+                    if args.verbose_out is True:
+                        print '[*] Writing error for submit API to log file complete'
                 else:
-                    print '[*] Submit API call was successful; writing to log file...'
+                    if args.verbose_out is True:
+                        print '[*] Submit API call was successful; writing to log file...'
                     logfile.write(dt.datetime.now().isoformat() + ' Submit API accepted for App ID ' + row[
                         0] + '; scan scheduled to start for ' + start_time + ' and end on ' + end_time + '\n \n \n')
-                    print '[*] Writing successful submit API to log file complete'
+                    if args.verbose_out is True:
+                        print '[*] Writing successful submit API to log file complete'
 
         # CLOSE LOG FILE
-        print '[*] Closing log file...'
+        if args.verbose_out is True:
+            print '[*] Closing log file...'
         logfile.close()
-        print '[*] Log file closed'
+        if args.verbose_out is True:
+            print '[*] Log file closed'
 
     # CLOSE APP LIST FILE
-    print '[*] Closing app_list file...'
+    if args.verbose_out is True:
+        print '[*] Closing app_list file...'
     app_list_file.close()
-    print '[*] App_list file closed'
+    if args.verbose_out is True:
+        print '[*] App_list file closed'
+
+    print 'Script finished. See api_logs.txt for details'
 
 
 if __name__ == "__main__":
