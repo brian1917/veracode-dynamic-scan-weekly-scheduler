@@ -1,4 +1,4 @@
 credentials.txt
-api_logs.txt
-app_list.csv
+*.txt
+*.csv
 play.py
