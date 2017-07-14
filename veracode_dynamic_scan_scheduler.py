@@ -72,7 +72,7 @@ def main():
                 if args.verbose_out is True:
                     print '[*] End time is ' + end_time
 
-                # CALL API TO START SCAN
+                # CALL RESCAN API
                 if args.verbose_out is True:
                     print '[*] Making rescan API for ' + row[0] + '...'
                 rescan = rescan_api(username, password, row[0])
@@ -93,7 +93,7 @@ def main():
                     if args.verbose_out is True:
                         print '[*] Writing successful rescan API to log file complete'
 
-                # CALL API TO SUBMIT SCAN
+                # CALL SUBMIT SCAN API
                 if args.verbose_out is True:
                     print '[*] Making submit API for ' + row[0] + '...'
                 submit = submit_dynamic_api(username, password, row[0], start_time, end_time)
