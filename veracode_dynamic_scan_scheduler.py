@@ -20,7 +20,7 @@ def submit_dynamic_api(api_user, api_password, app_id, start_time, end_time):
 
 
 def main():
-    # SET UP ARGUMENTS
+    # SET ARGUMENTS
     parser = argparse.ArgumentParser(
         description='This script schedules dynamic scans based on an input CSV file. Must include a header line '
                     '(first line is skipped). Col 1: APP ID. Col 2: Days out to start (e.g., a 2 schedules the scan '
