@@ -19,4 +19,4 @@ Input CSV file requires headers (first line of CSV is not processed by script):
 4. **days_to_run**: sets the number of days to allow the scan to run (e.g., 1 would stop the scan 1 day after the start time)
 
 ## Logging
-The script creates a **veracode_dynamic_scan_scheduler.log** file. Successfully schedules are recorded as well as any errors. Set logging level to debug for detailed log output.
+The script creates a **veracode_dynamic_scan_scheduler.log** file. Successfully scheduled scans are recorded as well as any errors. Set the *-v* argument for verbose (debug) logging.
