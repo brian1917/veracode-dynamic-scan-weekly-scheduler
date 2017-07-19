@@ -21,9 +21,6 @@ def submit_dynamic_api(api_user, api_password, app_id, start_time, end_time):
 
 
 def main():
-    # SET LOGGING
-    logging.basicConfig(filename='veracode_dynamic_scan_scheduler.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S%p', level=logging.DEBUG)
-
     # SET ARGUMENTS
     parser = argparse.ArgumentParser(
         description='This script schedules dynamic scans based on an input CSV file. Must include a header line '
@@ -34,9 +31,19 @@ def main():
                         help='Text file with username on line 1 and password on line 2')
     parser.add_argument('-a', '--app_list_file_name', required=False,
                         help='CSV file with app list. Use --help for instructions on CSV structure.')
-    parser.add_argument('-v', '--verbose', required=False, dest='verbose_out', action='store_true',
-                        help='Print verbose output')
+    parser.add_argument('-v', '--verbose', required=False, action='store_true', help='Verbose (Debug) logging')
     args = parser.parse_args()
+
+    # SET LOGGING
+    if args.verbose:
+        log_level = logging.DEBUG
+    else:
+        log_level = logging.INFO
+
+    logging.basicConfig(filename='veracode_dynamic_scan_scheduler.log',
+                        format='%(asctime)s - %(levelname)s - %(funcName)s - %(message)s',
+                        datefmt='%m/%d/%Y %I:%M:%S%p',
+                        level=log_level)
 
     # SET USER NAME/PASSWORD VARIABLES
     username = open(args.credentials, 'r').read().splitlines()[0]
@@ -78,8 +85,7 @@ def main():
             if rescan[0] != 200 or '<error>' in rescan[1]:
                 logging.info('Rescan API failed for App ID ' + row[0])
                 logging.info('Response code: ' + str(rescan[0]))
-                logging.info('API Response: ')
-                logging.info(rescan[1])
+                logging.info('API Response:' + rescan[1])
             else:
                 logging.info('Rescan API successful for App ID ' + row[0])
 
@@ -89,11 +95,11 @@ def main():
 
             if submit[0] != 200 or '<error>' in submit[1]:
                 logging.info('Submit API failed for App ID ' + row[0])
-                logging.info('[*] Response code: ' + str(submit[0]))
-                logging.info('[*] API Response: ')
-                logging.info(submit[1])
+                logging.info('Response code: ' + str(submit[0]))
+                logging.info('API Response:' + submit[1])
             else:
-                logging.info('Submit API call was successful for App ID ' + row[0] + '. Scan scheduled to start ' + start_time + ' and end on ' + end_time)
+                logging.info('Submit API call was successful for App ID ' +
+                             row[0] + '. Scan scheduled to start ' + start_time + ' and end on ' + end_time)
 
     # CLOSE APP LIST FILE
     logging.debug('Closing app_list file...')

@@ -1,4 +1,6 @@
 credentials.txt
 *.txt
 *.csv
+*log
 play.py
+.idea/
