@@ -3,6 +3,7 @@ import requests
 import argparse
 import datetime as dt
 import os
+import logging
 
 
 def rescan_api(api_user, api_password, app_id):
@@ -20,6 +21,9 @@ def submit_dynamic_api(api_user, api_password, app_id, start_time, end_time):
 
 
 def main():
+    # SET LOGGING
+    logging.basicConfig(filename='veracode_dynamic_scan_scheduler.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S%p', level=logging.DEBUG)
+
     # SET ARGUMENTS
     parser = argparse.ArgumentParser(
         description='This script schedules dynamic scans based on an input CSV file. Must include a header line '
@@ -46,90 +50,57 @@ def main():
     # OPEN APP LIST FILE
     with open(args.app_list_file_name, 'rb') as app_list_file:
 
-        # OPEN API LOGS FILE
-        with open('api_logs.txt', 'a') as logfile:
-            # IGNORE THE FIRST HEADER LINE
-            next(app_list_file)
+        # IGNORE THE FIRST HEADER LINE
+        next(app_list_file)
 
-            # PROCESS EACH REMAINING ENTRY IN CSV
-            app_list = csv.reader(app_list_file)
-            for row in app_list:
-                print 'Processing App ID ' + row[0]
+        # PROCESS EACH REMAINING ENTRY IN CSV
+        app_list = csv.reader(app_list_file)
+        for row in app_list:
+            print 'Processing App ID ' + row[0]
+            logging.debug('Processing APP ID ' + row[0])
 
-                # CALCULATE START TIME
-                if args.verbose_out is True:
-                    print '[*] Calculating start time...'
-                start_time = (dt.datetime(dt.datetime.now().year, dt.datetime.now().month, dt.datetime.now().day,
-                                          int(row[2])) + dt.timedelta(days=int(row[1]))).isoformat()
-                if args.verbose_out is True:
-                    print '[*] Start time is ' + start_time
+            # CALCULATE START TIME
+            logging.debug('Calculating start time...')
+            start_time = (dt.datetime(dt.datetime.now().year, dt.datetime.now().month, dt.datetime.now().day,
+                                      int(row[2])) + dt.timedelta(days=int(row[1]))).isoformat()
+            logging.debug('Start time is ' + start_time)
 
-                # CALCULATE END TIME
-                if args.verbose_out is True:
-                    print '[*] Calculating end time...'
-                end_time = (
-                    dt.datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S') + dt.timedelta(days=int(row[3]))).isoformat()
-                if args.verbose_out is True:
-                    print '[*] End time is ' + end_time
+            # CALCULATE END TIME
+            logging.debug('Calculating end time...')
+            end_time = (
+                dt.datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S') + dt.timedelta(days=int(row[3]))).isoformat()
+            logging.debug('End time is ' + end_time)
 
-                # CALL RESCAN API
-                if args.verbose_out is True:
-                    print '[*] Making rescan API for ' + row[0] + '...'
-                rescan = rescan_api(username, password, row[0])
+            # CALL RESCAN API
+            logging.debug('Making rescan API for ' + row[0] + '...')
+            rescan = rescan_api(username, password, row[0])
 
-                if rescan[0] != 200 or '<error>' in rescan[1]:
-                    if args.verbose_out is True:
-                        print '[*] Error in rescan API for ' + row[0] + '; writing to log file...'
-                    logfile.write(dt.datetime.now().isoformat() + ' Rescan API failed for App ID ' + row[0] + '\n')
-                    logfile.write('[*] Response code: ' + str(rescan[0]) + '\n')
-                    logfile.write('[*] API Response: ' + '\n')
-                    logfile.write(rescan[1] + '\n')
-                    if args.verbose_out is True:
-                        print '[*] Writing error for rescan API to log file complete'
-                else:
-                    if args.verbose_out is True:
-                        print '[*] Rescan API call was successful; writing to log file...'
-                    logfile.write(dt.datetime.now().isoformat() + ' Rescan API accepted for App ID ' + row[0] + '\n')
-                    if args.verbose_out is True:
-                        print '[*] Writing successful rescan API to log file complete'
+            if rescan[0] != 200 or '<error>' in rescan[1]:
+                logging.info('Rescan API failed for App ID ' + row[0])
+                logging.info('Response code: ' + str(rescan[0]))
+                logging.info('API Response: ')
+                logging.info(rescan[1])
+            else:
+                logging.info('Rescan API successful for App ID ' + row[0])
 
-                # CALL SUBMIT SCAN API
-                if args.verbose_out is True:
-                    print '[*] Making submit API for ' + row[0] + '...'
-                submit = submit_dynamic_api(username, password, row[0], start_time, end_time)
+            # CALL SUBMIT SCAN API
+            logging.debug('Making submit API for ' + row[0] + '...')
+            submit = submit_dynamic_api(username, password, row[0], start_time, end_time)
 
-                if submit[0] != 200 or '<error>' in submit[1]:
-                    if args.verbose_out is True:
-                        print '[*] Error in submit API for ' + row[0] + '; writing to log file...'
-                    logfile.write(dt.datetime.now().isoformat() + ': Submit API failed for App ID ' + row[0] + '\n')
-                    logfile.write('[*] Response code: ' + str(submit[0]) + '\n')
-                    logfile.write('[*] API Response: ' + '\n')
-                    logfile.write(submit[1] + '\n \n \n')
-                    if args.verbose_out is True:
-                        print '[*] Writing error for submit API to log file complete'
-                else:
-                    if args.verbose_out is True:
-                        print '[*] Submit API call was successful; writing to log file...'
-                    logfile.write(dt.datetime.now().isoformat() + ' Submit API accepted for App ID ' + row[
-                        0] + '; scan scheduled to start for ' + start_time + ' and end on ' + end_time + '\n \n \n')
-                    if args.verbose_out is True:
-                        print '[*] Writing successful submit API to log file complete'
-
-        # CLOSE LOG FILE
-        if args.verbose_out is True:
-            print '[*] Closing log file...'
-        logfile.close()
-        if args.verbose_out is True:
-            print '[*] Log file closed'
+            if submit[0] != 200 or '<error>' in submit[1]:
+                logging.info('Submit API failed for App ID ' + row[0])
+                logging.info('[*] Response code: ' + str(submit[0]))
+                logging.info('[*] API Response: ')
+                logging.info(submit[1])
+            else:
+                logging.info('Submit API call was successful for App ID ' + row[0] + '. Scan scheduled to start ' + start_time + ' and end on ' + end_time)
 
     # CLOSE APP LIST FILE
-    if args.verbose_out is True:
-        print '[*] Closing app_list file...'
+    logging.debug('Closing app_list file...')
     app_list_file.close()
-    if args.verbose_out is True:
-        print '[*] App_list file closed'
+    logging.debug('App_list file closed')
 
-    print 'Script finished. See api_logs.txt for details'
+    print 'Script finished. See veracode_dynamic_scan_scheduler.log for details'
 
 
 if __name__ == "__main__":
