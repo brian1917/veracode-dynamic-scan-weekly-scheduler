@@ -9,6 +9,7 @@ Script to set weekly dynamic scans from an input CSV file.
 ## Parameters
 1.  **-c, --credentials**: path to a text file that has the username on the first line and password on the second line.
 2.  **-a, --app_list_file_name**: path to CSV for app list and schedule. Details below.
+3. **-v, --verbose**: sets verbose logging for debugging.
 
 ## CSV File Specifications
 Input CSV file requires headers (first line of CSV is not processed by script):
