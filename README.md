@@ -1,10 +1,10 @@
 # Veracode Dynamic Scan Weekly Scheduler
 
-## Required Libraries
-CSV, requests, argparse, datetime, os, logging
-
 ## Description
-Script to set weekly dynamic scans from an input CSV file.
+The purpose of the script is to set weekly dynamic scans from an input CSV file. The script should be executed on a weekly basis (e.g., cron job). The script utilizes the rescan API which requires a scan having already been configured for an application profile. Configure the first dynamic scan in the platform and add application to CSV file for routine scanning.
+
+## Required Libraries
+CSV, requests, argparse, datetime, os
 
 ## Parameters
 1.  **-c, --credentials**: path to a text file that has the username on the first line and password on the second line.
@@ -18,4 +18,4 @@ Input CSV file requires headers (first line of CSV is not processed by script):
 4. **days_to_run**: sets the number of days to allow the scan to run (e.g., 1 would stop the scan 1 day after the start time)
 
 ## Logging
-The script creates a **veracode_dynamic_scan_scheduler.log** file. Successfully schedules are recorded as well as any errors. Set logging level to debug for detailed log output.
+The script creates an **api_logs.txt** file on the first run. All subsequent runs append to this file. Successfuly schedules are recorded as well as any errors.
