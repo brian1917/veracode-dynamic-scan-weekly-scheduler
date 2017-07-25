@@ -4,7 +4,7 @@
 CSV, requests, argparse, datetime, os, logging
 
 ## Description
-Script to set weekly dynamic scans from an input CSV file.
+Script to set weekly dynamic scans from an input CSV file. (Note - it's recommended to build CSV in text editor; Excel CSVs might be an issue.)
 
 ## Parameters
 1.  **-c, --credentials**: path to a text file that has the username on the first line and password on the second line.
